@@ -1,7 +1,7 @@
 <?php
 
 class Figure {
-    protected $isBlack;
+    public $isBlack;
 
     public function __construct($isBlack) {
         $this->isBlack = $isBlack;

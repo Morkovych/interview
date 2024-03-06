@@ -8,8 +8,16 @@ try {
     $args = $argv;
     array_shift($args);
 
-    foreach ($args as $move) {
-        $board->move($move);
+    $color = [];
+
+    foreach ($args as $key => $move) {
+        $color[$key] = $board->move($move);
+        if ($key === 0 && $color[$key] !== false) {
+            throw new Exception('The sequence of moves is not followed.');
+        }
+        if ($key > 0 && $color[$key - 1] === $color[$key]) {
+            throw new Exception('The sequence of moves is not followed.');
+        }
     }
 
     $board->dump();
