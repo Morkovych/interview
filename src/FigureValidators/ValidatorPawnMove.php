@@ -1,6 +1,9 @@
 <?php
 
-class ValidatorPawnMove
+namespace FigureValidators;
+use Exception;
+
+class ValidatorPawnMove implements ValidatorInterface
 {
     private array $figures;
 
@@ -45,7 +48,7 @@ class ValidatorPawnMove
      * @return bool
      * @throws Exception
      */
-    private function availabilityShapesCheck(string $xFrom, int $yFrom): bool
+    public function availabilityShapesCheck(string $xFrom, int $yFrom): bool
     {
         if (isset($this->figures[$xFrom][$yFrom]) && get_class($this->figures[$xFrom][$yFrom]) === 'Pawn') {
             return true;
@@ -63,7 +66,7 @@ class ValidatorPawnMove
      * @param int $yFrom
      * @return bool - false = white, true = black
      */
-    private function checkingColorFigure(string $xFrom, int $yFrom): bool
+    public function checkingColorFigure(string $xFrom, int $yFrom): bool
     {
         return $this->figures[$xFrom][$yFrom]->isBlack;
     }
@@ -76,7 +79,7 @@ class ValidatorPawnMove
      * @param bool $color
      * @return array - массив клеток куда потенциально можно сходить
      */
-    private function whereCanGo(string $xFrom, int $yFrom, bool $color): array
+    public function whereCanGo(string $xFrom, int $yFrom, bool $color): array
     {
         if ($color && $yFrom === 7) {
             return [
@@ -107,7 +110,7 @@ class ValidatorPawnMove
      * @param array $whereCanGo
      * @return array - массив фигур встречающихся по дороге пешки
      */
-    private function checkOtherFigures(array $whereCanGo): array
+    public function checkOtherFigures(array $whereCanGo): array
     {
         $result = [];
         foreach ($whereCanGo as $where) {
@@ -134,7 +137,7 @@ class ValidatorPawnMove
      * @return bool|void|object - false - просто ходит вперед, true - объект поедаемой фигуры.
      * @throws Exception
      */
-    private function iAmHungry(int $yTo, bool $pawnColor, array $figuresAlongTheRoad)
+    public function iAmHungry(int $yTo, bool $pawnColor, array $figuresAlongTheRoad)
     {
         foreach ($figuresAlongTheRoad as $item) {
             if ($pawnColor) {

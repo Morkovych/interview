@@ -1,5 +1,7 @@
 <?php
 
+use FigureValidators\ValidatorHelper;
+
 class Board
 {
     protected array $figures = [];
@@ -46,7 +48,7 @@ class Board
     /**
      * @throws Exception
      */
-    public function move($move, $validatorPawnMove = new ValidatorPawnMove())
+    public function move($move, $validatorPawnMove = null)
     {
         if (!preg_match('/^([a-h])(\d)-([a-h])(\d)$/', $move, $match)) {
             throw new \Exception("Incorrect move");
@@ -59,7 +61,9 @@ class Board
 
         $color = $this->figures[$xFrom][$yFrom]->isBlack;
 
-        $validatorPawnMove->validate($xFrom, $yFrom, $xTo, $yTo, $this->figures);
+        // Получаем нужный валидатор для фигуры, валидируем ход.
+        $validator = ValidatorHelper::getValidator(get_class($this->figures[$xFrom][$yFrom]));
+        $validator->validate($xFrom, $yFrom, $xTo, $yTo, $this->figures);
 
         if (isset($this->figures[$xFrom][$yFrom])) {
             $this->figures[$xTo][$yTo] = $this->figures[$xFrom][$yFrom];
