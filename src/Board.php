@@ -48,7 +48,7 @@ class Board
     /**
      * @throws Exception
      */
-    public function move($move, $validatorPawnMove = null)
+    public function move($move)
     {
         if (!preg_match('/^([a-h])(\d)-([a-h])(\d)$/', $move, $match)) {
             throw new \Exception("Incorrect move");
