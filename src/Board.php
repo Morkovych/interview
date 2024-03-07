@@ -6,6 +6,8 @@ class Board
 {
     protected array $figures = [];
 
+    private BoardState $state;
+
     public function __construct()
     {
         $this->figures['a'][1] = new Rook(false);
@@ -43,6 +45,8 @@ class Board
         $this->figures['f'][8] = new Bishop(true);
         $this->figures['g'][8] = new Knight(true);
         $this->figures['h'][8] = new Rook(true);
+
+        $this->transitionTo(new BoardStateWhite());
     }
 
     /**
@@ -59,7 +63,11 @@ class Board
         $xTo = $match[3];
         $yTo = $match[4];
 
-        $color = $this->figures[$xFrom][$yFrom]->isBlack;
+        // Проверяем состояние поля, кто должен сейчас ходить. Если все ОК - переключаем состояние, даем ходить следующему игроку.
+        if ($this->figures[$xFrom][$yFrom]->isBlack === $this->state->getState())
+            $this->state->error($xFrom, $yFrom);
+        else
+            $this->state->switch();
 
         // Получаем нужный валидатор для фигуры, валидируем ход.
         $validator = ValidatorHelper::getValidator(get_class($this->figures[$xFrom][$yFrom]));
@@ -69,8 +77,6 @@ class Board
             $this->figures[$xTo][$yTo] = $this->figures[$xFrom][$yFrom];
         }
         unset($this->figures[$xFrom][$yFrom]);
-
-        return $color;
     }
 
     public function dump(): void
@@ -87,5 +93,12 @@ class Board
             echo "\n";
         }
         echo "  abcdefgh\n";
+    }
+
+    public function transitionTo(BoardState $state): void
+    {
+        $this->state = $state;
+        $this->state->setContext($this);
+
     }
 }
